@@ -1,0 +1,6 @@
+{
+  "name": "AI Bug Detection & Management Platform",
+  "description": "A comprehensive, full-stack developer platform featuring AI-powered bug analysis, interactive bug tracking with priority triage, and a debugging lab for testing common security and structural code issues.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
