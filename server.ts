@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Response } from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI as AIClient, Type } from "@google/genai";
@@ -9,7 +9,12 @@ dotenv.config({ path: [".env.local", ".env"] });
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
+app.disable("x-powered-by");
 app.use(express.json());
+
+function sendError(res: Response, status: number, message: string, extra: Record<string, unknown> = {}) {
+  return res.status(status).json({ error: message, ...extra });
+}
 
 // -------------------------------------------------------------
 // STATE DATABASE (In-Memory for Container Lifespan)
@@ -1038,11 +1043,11 @@ Keep the explanation engaging, technical, and educational. Format the output ele
 
   } catch (error: any) {
     console.error("Lab explanation error:", error);
-    return res.status(500).json({
-      error: error.message || "Failed to generate AI deep dive explanation for this lab."
-    });
+    return sendError(res, 500, error.message || "Failed to generate AI deep dive explanation for this lab.");
   }
 });
+
+app.use("/api", (req, res) => sendError(res, 404, "API route not found."));
 
 // 3. Vite development middleware or production static files serving
 async function setupVite() {

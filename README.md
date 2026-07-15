@@ -79,6 +79,8 @@ See [`.env.example`](.env.example) for the full list. Copy it to `.env.local` (g
 | `AI_API_KEY` | Yes, for AI features | API key for the AI provider (Gemini) used by the AI triage, diagnostics, code scanner, and productivity endpoints. Without it, those endpoints return a 500 error; the rest of the app works normally. |
 | `APP_URL` | No | The public URL the app is hosted at, used for self-referential links. Optional locally. |
 
+> Note: If AI responses are malformed or diagnostics fail, ensure `AI_API_KEY` is set and valid. The app now includes a `/api/health` endpoint for quick service checks.
+
 ## API Documentation
 
 All API routes are prefixed with `/api` and served by the Express app in `server.ts`. Selected endpoints:
