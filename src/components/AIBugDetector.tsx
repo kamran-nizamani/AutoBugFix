@@ -103,6 +103,13 @@ export default function AIBugDetector({ onAddTicket }: AIBugDetectorProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCopyRawResponse = () => {
+    if (!rawResponse) return;
+    navigator.clipboard.writeText(rawResponse);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const handleCreateTicket = () => {
     if (!result) return;
     onAddTicket({
@@ -270,7 +277,15 @@ export default function AIBugDetector({ onAddTicket }: AIBugDetectorProps) {
             </p>
             {rawResponse && (
               <div className="mt-4 p-3 text-left bg-[#071018] border border-[#1E293B] rounded max-h-48 overflow-y-auto text-xs text-slate-300 font-mono">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500 mb-2">Raw AI Response</div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Raw AI Response</span>
+                  <button
+                    onClick={handleCopyRawResponse}
+                    className="px-2 py-1 bg-slate-800 text-slate-200 rounded text-[10px] font-bold uppercase tracking-wider hover:bg-slate-700"
+                  >
+                    Copy Raw
+                  </button>
+                </div>
                 <pre>{rawResponse}</pre>
               </div>
             )}

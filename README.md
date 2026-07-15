@@ -96,6 +96,7 @@ All API routes are prefixed with `/api` and served by the Express app in `server
 | `POST` | `/api/ai/productivity-generator` | Generate PR templates / tests / commit messages |
 | `POST` | `/api/analyze` | AI OWASP-style security scan of submitted source |
 | `POST` | `/api/lab-explain` | AI deep-dive explanation for a Debugging Lab sample |
+| `GET` | `/api/health` | Basic app health and uptime check |
 | `GET` | `/api/projects` / `/api/sprints` / `/api/teams` / `/api/orgs` | Project, sprint, team, and org data |
 | `GET` | `/api/admin/audit-logs` | Audit log |
 

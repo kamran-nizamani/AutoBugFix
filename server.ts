@@ -209,6 +209,10 @@ app.get("/api/app-info", (req, res) => {
   res.json({ name: "BugFlow AI", version: "2.1.0-Enterprise", activeUserId, activeOrgId });
 });
 
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", uptimeSeconds: process.uptime(), version: "2.1.0-Enterprise" });
+});
+
 // Authentication Routes
 app.post("/api/auth/register", (req, res) => {
   const { email, password, name, role } = req.body;
