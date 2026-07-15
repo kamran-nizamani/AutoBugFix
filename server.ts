@@ -978,8 +978,17 @@ You MUST evaluate the code and provide a structured JSON response following the 
       throw new Error("No response received from the AI model.");
     }
 
-    const parsed = JSON.parse(text);
-    return res.json(parsed);
+    try {
+      const parsed = JSON.parse(text);
+      return res.json(parsed);
+    } catch (parseError: any) {
+      console.error("AI Analysis Parse Error:", parseError);
+      console.error("AI raw response:", text);
+      return res.status(500).json({
+        error: "AI returned invalid response format. Please retry the diagnostics run.",
+        raw: text
+      });
+    }
 
   } catch (error: any) {
     console.error("AI Analysis Error:", error);

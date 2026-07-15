@@ -47,12 +47,14 @@ export default function AIBugDetector({ onAddTicket }: AIBugDetectorProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AIAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [rawResponse, setRawResponse] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [ticketCreated, setTicketCreated] = useState(false);
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
     setError(null);
+    setRawResponse(null);
     setTicketCreated(false);
     try {
       const response = await fetch("/api/analyze", {
@@ -61,12 +63,32 @@ export default function AIBugDetector({ onAddTicket }: AIBugDetectorProps) {
         body: JSON.stringify({ code, profile, language }),
       });
 
+      const responseText = await response.text();
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error || "Failed to analyze code. Please check your connection or key setup.");
+        let errorMessage = "Failed to analyze code. Please check your connection or key setup.";
+        try {
+          const errData = JSON.parse(responseText);
+          errorMessage = errData.error || errorMessage;
+          if (typeof errData.raw === "string" && errData.raw.trim()) {
+            setRawResponse(errData.raw);
+          }
+        } catch {
+          if (responseText.trim()) {
+            errorMessage = responseText;
+            setRawResponse(responseText);
+          }
+        }
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        setRawResponse(responseText);
+        throw new Error("Invalid diagnostics response received from the AI service.");
+      }
+
       setResult(data);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
@@ -246,6 +268,12 @@ export default function AIBugDetector({ onAddTicket }: AIBugDetectorProps) {
             <p className="text-slate-400 text-xs max-w-md mt-2 leading-relaxed bg-[#0A0C10] p-3 border border-[#1E293B] rounded font-mono text-left">
               {error}
             </p>
+            {rawResponse && (
+              <div className="mt-4 p-3 text-left bg-[#071018] border border-[#1E293B] rounded max-h-48 overflow-y-auto text-xs text-slate-300 font-mono">
+                <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500 mb-2">Raw AI Response</div>
+                <pre>{rawResponse}</pre>
+              </div>
+            )}
             <button
               id="retry-diagnostics-btn"
               onClick={handleAnalyze}
