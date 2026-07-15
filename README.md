@@ -127,10 +127,136 @@ These platforms run `server.ts` as a normal long-lived Node process, which match
 
 ## Future Improvements
 
+### AI Features
+
+- AI-powered bug severity prediction
+- AI duplicate bug detection
+- AI root cause analysis
+- AI fix suggestions
+- AI log and stack trace analysis
+- One-click AI bug fixing
+- AI-generated Pull Requests
+- AI-powered code review assistant
+- Performance optimization suggestions
+- Security vulnerability detection
+- Code quality scoring
+- Test case generation
+- Automatic unit test creation
+
+### Code Intelligence
+
+- Automatic code scanning for entire repositories
+- Support for multiple programming languages
+- GitHub, GitLab, and Bitbucket integration
+- CI/CD pipeline integration
+- VS Code extension
+- Browser extension
+- Team collaboration features
+- Bug fix history and analytics
+
+### Project Management
+
+- Sprint management
+- Kanban board
+- Scrum dashboard
+- Time tracking
+- Project milestones
+
+### Integrations
+
+- GitHub integration
+- GitLab integration
+- Jira import/export
+- Slack notifications
+- Discord notifications
+- Microsoft Teams integration
+
+### Reporting
+
+- PDF report generation
+- Excel and CSV export
+- Bug analytics dashboard
+- Team performance reports
+
+### User Experience
+
+- Dark/Light mode
+- Mobile application
+- Progressive Web App (PWA)
+- Multi-language support
+- Advanced search and filters
+
+### Security
+
+- Two-Factor Authentication (2FA)
+- Single Sign-On (SSO)
+- Audit logs
+- Role-based access control improvements
+
+### Performance
+
+- Redis caching
+- Background job processing
+- Real-time notifications
+- Faster search indexing
+
+### DevOps
+
+- Docker deployment
+- Kubernetes support
+- CI/CD pipeline
+- Monitoring with Prometheus & Grafana
+
+### AI Auto Bug Fix Engine
+
+- Upload a project folder or connect a GitHub repository
+- Scan the entire codebase recursively
+- Detect syntax errors, runtime errors, logic bugs, security vulnerabilities, code smells, and performance issues
+- Support JavaScript, TypeScript, Python, Java, C++, C#, PHP, Go, Rust, and SQL
+- Explain each bug in simple language with file names and line numbers
+- Show buggy code and corrected code side-by-side
+- Generate a unified diff before applying changes
+- Allow users to Accept, Reject, or Edit each fix
+- Apply fixes automatically after user approval with backup creation
+- Generate Git commits automatically
+- Create GitHub Pull Requests with AI-generated descriptions
+- Re-run analysis after each fix to verify resolution
+- Generate or update unit tests for fixed code
+- Detect and remove unused imports, variables, and dead code
+- Suggest performance optimizations and security improvements
+- Preserve coding style and project formatting
+- Avoid introducing breaking changes
+- Maintain a complete history of every AI-generated fix with rollback support
+
+#### AI Auto Bug Fix Engine Workflow
+
+1. User uploads project or connects GitHub.
+2. AI scans the entire project.
+3. AI lists all detected issues.
+4. AI explains each issue.
+5. AI generates a safe fix.
+6. User reviews the code diff.
+7. User approves or rejects the fix.
+8. AI updates the source code.
+9. AI runs validation/tests.
+10. AI commits changes and optionally creates a GitHub Pull Request.
+
+### Existing Roadmap Targets
+
 - Replace in-memory arrays with a real database (Postgres/SQLite) and hashed password storage
 - Add automated tests (unit + integration for the API routes)
 - Code-split further and lazy-load heavy chart/AI components
 - Add a provider-agnostic AI client interface so other model providers can be swapped in without touching route handlers
+
+### Recommended Next Steps
+
+- Implement a persistent backend instead of in-memory state so data survives restarts
+- Replace plaintext password storage with hashed credentials and session management
+- Add end-to-end tests for API routes and core UI flows
+- Build a GitHub repository connect flow and repository scanner UI
+- Create explicit AI fix workflow screens for diff review, approval, and rollback
+- Add feature flags for toggling AI scan, GitHub PR creation, and test generation
+- Add CI pipeline configuration and basic lint/test automation
 
 ## Contributing
 
