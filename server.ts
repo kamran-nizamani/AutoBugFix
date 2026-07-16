@@ -16,6 +16,44 @@ function sendError(res: Response, status: number, message: string, extra: Record
   return res.status(status).json({ error: message, ...extra });
 }
 
+function sendAIError(res: Response, error: unknown, rawResponse?: string, status = 502) {
+  const message = typeof error === "string" ? error : error && typeof error === "object" && "message" in error ? (error as any).message : "AI service failed to complete the request.";
+  console.error("AI Service Error:", error, rawResponse ? `Raw response length=${rawResponse.length}` : "");
+  return res.status(status).json({
+    error: "AI diagnostics failed. Retry the scan or verify your AI API configuration.",
+    detail: message,
+    raw: rawResponse || undefined
+  });
+}
+
+function isTransientAIError(error: unknown) {
+  if (!error || typeof error !== "object") return false;
+  const text = (error as any).message || "";
+  return typeof text === "string" && text.includes("FUNCTION_INVOCATION_FAILED");
+}
+
+async function callAI(model: string, contents: string, config?: Record<string, unknown>) {
+  const ai = getAIClient();
+  const execute = async () => {
+    const response = await ai.models.generateContent({ model, contents, config });
+    const text = response?.text;
+    if (typeof text !== "string") {
+      throw new Error("AI returned an unexpected response type.");
+    }
+    return text;
+  };
+
+  try {
+    return await execute();
+  } catch (error: unknown) {
+    if (isTransientAIError(error)) {
+      console.warn("Transient AI invocation failed, retrying once.", error);
+      return await execute();
+    }
+    throw error;
+  }
+}
+
 // -------------------------------------------------------------
 // STATE DATABASE (In-Memory for Container Lifespan)
 // -------------------------------------------------------------
@@ -498,49 +536,32 @@ app.post("/api/bugs/triage-ai", async (req, res) => {
 
   try {
     const ai = getAIClient();
-    const systemInstruction = `You are BugFlow's elite triage agent. Review the provided issue title and description.
+    const prompt = `You are BugFlow's elite triage agent. Review the provided issue title and description.
 Predict:
-- severity: "low", "medium", "high", "critical"
-- priority: "low", "medium", "high", "urgent"
-- category: A single word classification (e.g. security, performance, logic, frontend, backend, crash)
+- severity: low, medium, high, or critical
+- priority: low, medium, high, or urgent
+- category: A single word classification (security, performance, logic, frontend, backend, crash)
 - rootCause: 1-2 sentence explanation of why this bug is likely happening.
 - suggestedFix: 1-3 code lines or procedural description of the best fix.
-- isDuplicate: false (or true if title matches common patterns).
-
-Return a structured JSON following the schema precisely.`;
+Return ONLY valid JSON with keys: severity, priority, category, rootCause, suggestedFix.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
-      contents: `Title: ${title}\nDescription: ${description || "No description provided."}`,
-      config: {
-        systemInstruction,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            severity: { type: Type.STRING },
-            priority: { type: Type.STRING },
-            category: { type: Type.STRING },
-            rootCause: { type: Type.STRING },
-            suggestedFix: { type: Type.STRING }
-          },
-          required: ["severity", "priority", "category", "rootCause", "suggestedFix"]
-        }
-      }
+      contents: `${prompt}\n\nTitle: ${title}\nDescription: ${description || "No description provided."}`
     });
 
-    const parsed = JSON.parse(response.text || "{}");
-    res.json(parsed);
+    const text = response.text || "";
+    let parsed;
+
+    try {
+      parsed = JSON.parse(text);
+    } catch (parseError) {
+      return sendAIError(res, parseError, text);
+    }
+
+    return res.json(parsed);
   } catch (error: any) {
-    console.error("AI Triage Error:", error);
-    // Return sensible fallback triage values
-    res.json({
-      severity: "medium",
-      priority: "medium",
-      category: "logic",
-      rootCause: "Uncaught logical state mutation or unhandled function arguments mismatch.",
-      suggestedFix: "Examine component mounts, add null guards, or parameterized validation filters."
-    });
+    return sendAIError(res, error);
   }
 });
 
@@ -689,32 +710,17 @@ Provide a structured JSON response following the schema precisely:
 - suggestedFixCode: The complete, secure, well-commented code block that resolves the bug.
 - validationSteps: 1-2 sentences on how to test this fix.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            explanation: { type: Type.STRING },
-            suggestedFixCode: { type: Type.STRING },
-            validationSteps: { type: Type.STRING }
-          },
-          required: ["explanation", "suggestedFixCode", "validationSteps"]
-        }
-      }
-    });
+    const text = await callAI("gemini-3.5-flash", prompt);
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch (parseError) {
+      return sendAIError(res, parseError, text);
+    }
 
-    const parsed = JSON.parse(response.text || "{}");
-    res.json(parsed);
+    return res.json(parsed);
   } catch (error: any) {
-    console.error("AI Bug Fix Error:", error);
-    res.json({
-      explanation: "AI analyzed the issue and identified a probable state leak or unhandled exception in active lifecycle loops.",
-      suggestedFixCode: `// Proposed Remediation Patch\nuseEffect(() => {\n  const handler = setInterval(fetchMetrics, 1000);\n  return () => clearInterval(handler); // Ensure safe cleanup on unmount\n}, []);`,
-      validationSteps: "Verify background network calls cease immediately upon page navigation/component unmounting."
-    });
+    return sendAIError(res, error);
   }
 });
 
@@ -925,85 +931,37 @@ app.post("/api/analyze", async (req, res) => {
       profileInstruction = "Provide a general audit including logic bugs, potential edge cases, security, and performance.";
     }
 
-    const systemInstruction = `You are an elite, senior compiler engineer and security researcher.
+    const prompt = `You are an elite, senior compiler engineer and security researcher.
 Analyze the provided code written in ${language || "the auto-detected language"}.
 ${profileInstruction}
 
-You MUST evaluate the code and provide a structured JSON response following the exact schema provided.
-- metrics: Evaluate securityScore, performanceRating, readabilityScore, and complexityScore (all on a 0 to 100 scale, where 100 is excellent). For complexityScore, 100 means low complexity (excellent), and 0 means high complexity/unreadable.
-- vulnerabilities: List each specific issue, including the estimated starting line number (approximate is fine, 1-indexed), a brief clear description of the issue, and a short recommended change. If no bugs or style issues exist, keep this array empty.
-- hasBugs: Set to true if there are any logical, security, or style improvements, otherwise false.
-- severity: Set to "low", "medium", "high", or "critical" depending on the worst bug found. If no bugs, use "low".
-- bugType: A 1-3 word classification of the primary issue (e.g., "SQL Injection", "Infinite Re-render", "Inefficient Loop", "None").
-- summary: A 1-2 sentence high-level overview.
-- explanation: A detailed, professional markdown explanation discussing the root causes and engineering trade-offs.
-- suggestedFix: The COMPLETE fully refactored, highly secure, clean version of the code that fixes all identified issues. Preserve formatting.`;
+Provide ONLY valid JSON output with the following fields:
+- hasBugs: boolean
+- severity: string
+- bugType: string
+- summary: string
+- explanation: string
+- suggestedFix: string
+- vulnerabilities: [{ line: number, issue: string, suggestion: string }]
+- metrics: { securityScore: number, performanceRating: number, readabilityScore: number, complexityScore: number }
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: code,
-      config: {
-        systemInstruction,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            hasBugs: { type: Type.BOOLEAN },
-            severity: { type: Type.STRING },
-            bugType: { type: Type.STRING },
-            summary: { type: Type.STRING },
-            explanation: { type: Type.STRING },
-            suggestedFix: { type: Type.STRING },
-            vulnerabilities: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  line: { type: Type.INTEGER },
-                  issue: { type: Type.STRING },
-                  suggestion: { type: Type.STRING }
-                },
-                required: ["line", "issue", "suggestion"]
-              }
-            },
-            metrics: {
-              type: Type.OBJECT,
-              properties: {
-                securityScore: { type: Type.INTEGER },
-                performanceRating: { type: Type.INTEGER },
-                readabilityScore: { type: Type.INTEGER },
-                complexityScore: { type: Type.INTEGER }
-              },
-              required: ["securityScore", "performanceRating", "readabilityScore", "complexityScore"]
-            }
-          },
-          required: ["hasBugs", "severity", "bugType", "summary", "explanation", "suggestedFix", "vulnerabilities", "metrics"]
-        }
-      }
-    });
+Do not include any additional wrapper text or commentary.`;
 
-    const text = response.text;
-    if (!text) {
-      throw new Error("No response received from the AI model.");
+    const text = await callAI("gemini-3.5-flash", `${prompt}\n\n${code}`);
+    if (!text.trim()) {
+      return sendAIError(res, "AI returned an empty response.", text);
     }
 
+    let parsed;
     try {
-      const parsed = JSON.parse(text);
-      return res.json(parsed);
-    } catch (parseError: any) {
-      console.error("AI Analysis Parse Error:", parseError);
-      console.error("AI raw response:", text);
-      return res.status(500).json({
-        error: "AI returned invalid response format. Please retry the diagnostics run.",
-        raw: text
-      });
+      parsed = JSON.parse(text);
+    } catch (parseError) {
+      return sendAIError(res, parseError, text);
     }
 
+    return res.json(parsed);
   } catch (error: any) {
-    console.error("AI Analysis Error:", error);
-    return res.status(500).json({
-      error: error.message || "An internal error occurred during code analysis."
-    });
+    return sendAIError(res, error);
   }
 });
 
