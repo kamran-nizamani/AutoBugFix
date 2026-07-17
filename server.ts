@@ -3,11 +3,48 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI as AIClient, Type } from "@google/genai";
 import dotenv from "dotenv";
+import { MongoClient, type Db } from "mongodb";
 
 dotenv.config({ path: [".env.local", ".env"] });
 
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const MONGODB_URI = process.env.MONGODB_URI || "";
+
+let mongoClient: MongoClient | null = null;
+let mongoDb: Db | null = null;
+
+async function initializeMongoDB() {
+  if (!MONGODB_URI) {
+    console.warn("MONGODB_URI is not set. MongoDB integration will remain disabled.");
+    return;
+  }
+
+  try {
+    mongoClient = new MongoClient(MONGODB_URI, {
+      serverApi: {
+        version: "1",
+        strict: true,
+        deprecationErrors: true,
+      },
+    });
+
+    await mongoClient.connect();
+    mongoDb = mongoClient.db();
+    console.log("Connected to MongoDB successfully.");
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    mongoClient = null;
+    mongoDb = null;
+  }
+}
+
+function getMongoDB() {
+  if (!mongoDb) {
+    throw new Error("MongoDB is not initialized. Ensure MONGODB_URI is configured and the connection succeeded.");
+  }
+  return mongoDb;
+}
 
 app.disable("x-powered-by");
 app.use(express.json());
@@ -565,6 +602,13 @@ Return ONLY valid JSON with keys: severity, priority, category, rootCause, sugge
   }
 });
 
+app.get("/api/mongo-health", (req, res) => {
+  if (!mongoDb) {
+    return res.status(503).json({ status: "unavailable", message: "MongoDB is not connected." });
+  }
+  res.json({ status: "ok", database: mongoDb.databaseName });
+});
+
 // Create Bug
 app.post("/api/bugs", (req, res) => {
   const {
@@ -1032,7 +1076,14 @@ async function setupVite() {
 // module is only invoked as the /api serverless function, so skip the
 // Vite/static bootstrap and port bind entirely.
 if (!process.env.VERCEL) {
-  setupVite();
+  initializeMongoDB().then(() => setupVite()).catch((error) => {
+    console.error("Startup MongoDB initialization failed:", error);
+    setupVite();
+  });
+} else {
+  initializeMongoDB().catch((error) => {
+    console.error("Startup MongoDB initialization failed:", error);
+  });
 }
 
 export default app;

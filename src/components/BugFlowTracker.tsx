@@ -527,7 +527,7 @@ export default function BugFlowTracker() {
         </div>
       ) : (
         /* List / Table View */
-        <div className="bg-[#0F172A] border border-[#1E293B] rounded overflow-hidden">
+        <div className="panel-shell overflow-hidden">
           <div className="overflow-x-auto font-mono text-[10px]">
             <table className="w-full text-left border-collapse">
               <thead>

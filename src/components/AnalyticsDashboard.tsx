@@ -141,8 +141,8 @@ export default function AnalyticsDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Weekly ingestion trends */}
-        <div className="lg:col-span-8 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[400px]">
-          <div className="flex items-center justify-between border-b border-[#1E293B] pb-3 mb-4">
+        <div className="lg:col-span-8 panel-shell p-5 flex flex-col h-[400px]">
+          <div className="panel-header justify-between border-b border-[#1E293B] pb-3 mb-4">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
               <TrendingUp className="w-4 h-4 text-cyan-400" /> Operational Bug Trends (Reported vs Resolved)
             </h3>
@@ -182,10 +182,10 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* Status distribution Pie */}
-        <div className="lg:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[400px]">
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-[#1E293B] pb-3 mb-4">
-            Issue Lifecycle Status Distribution
-          </h3>
+        <div className="lg:col-span-4 panel-shell p-5 flex flex-col h-[400px]">
+          <div className="panel-header justify-between border-b border-[#1E293B] pb-3 mb-4">
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Issue Lifecycle Status Distribution</h3>
+          </div>
           <div className="flex-1 w-full font-mono text-[9px] relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -214,10 +214,10 @@ export default function AnalyticsDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Severity counts */}
-        <div className="lg:col-span-6 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[350px]">
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-[#1E293B] pb-3 mb-4">
-            Incident Backlog Partitioned By Severity
-          </h3>
+        <div className="lg:col-span-6 panel-shell p-5 flex flex-col h-[350px]">
+          <div className="panel-header justify-between border-b border-[#1E293B] pb-3 mb-4">
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Incident Backlog Partitioned By Severity</h3>
+          </div>
           <div className="flex-1 w-full font-mono text-[10px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={severityData}>
@@ -236,10 +236,13 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* Developer productivity leaderboard */}
-        <div className="lg:col-span-6 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[350px]">
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-[#1E293B] pb-3 mb-4 flex items-center gap-2">
-            <UserCheck className="w-4 h-4 text-cyan-400" /> Engineer Diagnostic Leaderboard
-          </h3>
+        <div className="lg:col-span-6 panel-shell p-5 flex flex-col h-[350px]">
+          <div className="panel-header justify-between border-b border-[#1E293B] pb-3 mb-4 flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <UserCheck className="w-4 h-4 text-cyan-400" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Engineer Diagnostic Leaderboard</span>
+            </div>
+          </div>
 
           <div className="flex-grow flex flex-col gap-3.5 overflow-y-auto pt-2">
             {[

@@ -102,8 +102,8 @@ export default function IntegrationsHub() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#0A0C10]">
       
       {/* Github link module */}
-      <div className="lg:col-span-6 flex flex-col h-[650px] bg-[#0F172A] border border-[#1E293B] rounded overflow-hidden">
-        <div className="bg-[#0F172A] px-4 py-3 border-b border-[#1E293B] flex items-center gap-2">
+      <div className="lg:col-span-6 panel-shell overflow-hidden flex flex-col h-[650px]">
+        <div className="panel-header">
           <Github className="w-4 h-4 text-cyan-400" />
           <h3 className="font-bold text-white text-xs uppercase tracking-wider">GitHub CI/CD Code Sync</h3>
         </div>
@@ -188,8 +188,8 @@ export default function IntegrationsHub() {
       </div>
 
       {/* Webhooks outbound module */}
-      <div className="lg:col-span-6 flex flex-col h-[650px] bg-[#0F172A] border border-[#1E293B] rounded overflow-hidden">
-        <div className="bg-[#0F172A] px-4 py-3 border-b border-[#1E293B] flex items-center gap-2">
+      <div className="lg:col-span-6 panel-shell overflow-hidden flex flex-col h-[650px]">
+        <div className="panel-header">
           <Bot className="w-4 h-4 text-cyan-400" />
           <h3 className="font-bold text-white text-xs uppercase tracking-wider">Outbound Event Webhooks</h3>
         </div>

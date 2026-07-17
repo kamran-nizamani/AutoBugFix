@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from "react";
 import {
-  ShieldAlert, Ticket, Calendar, Sparkles, BarChart3,
-  Building2, UserCheck, Fingerprint, GitBranch,
-  Terminal, ShieldCheck, Heart, Power, BellRing, Settings
+  ShieldAlert,
+  Ticket,
+  Calendar,
+  Sparkles,
+  BarChart3,
+  Building2,
+  UserCheck,
+  Fingerprint,
+  GitBranch,
+  Terminal,
+  ShieldCheck,
+  Power,
+  BellRing,
+  Settings,
+  Flame
 } from "lucide-react";
 import AIBugDetector from "./components/AIBugDetector";
 import DebuggingLab from "./components/DebuggingLab";
@@ -15,6 +27,31 @@ import AuthCenter from "./components/AuthCenter";
 import AdminPanel from "./components/AdminPanel";
 import IntegrationsHub from "./components/IntegrationsHub";
 import { User } from "./types";
+
+const navigationItems = [
+  { id: "tracker" as const, label: "Issue Board", desc: "Kanban, tickets & releases", icon: Ticket },
+  { id: "sprints" as const, label: "Sprint Planner", desc: "Milestones & velocity", icon: Calendar },
+  { id: "scanner" as const, label: "AI Scanner", desc: "Security triage", icon: ShieldAlert },
+  { id: "labs" as const, label: "Lab Sandbox", desc: "Attack & defense", icon: Terminal },
+  { id: "ai-productivity" as const, label: "AI Productivity", desc: "Automation workflows", icon: Sparkles },
+  { id: "analytics" as const, label: "Analytics", desc: "Dashboards & exports", icon: BarChart3 },
+  { id: "tenants" as const, label: "Tenants", desc: "Org structures", icon: Building2 },
+  { id: "auth" as const, label: "Auth Center", desc: "Identity controls", icon: UserCheck },
+  { id: "integrations" as const, label: "Integrations", desc: "GitOps & webhooks", icon: GitBranch },
+  { id: "audits" as const, label: "Audits", desc: "Compliance logs", icon: Fingerprint }
+];
+
+const dashboardStats = [
+  { label: "Open Issues", value: "18", delta: "+22%", icon: Ticket, accent: "from-cyan-500 to-sky-500" },
+  { label: "Sprint Health", value: "92%", delta: "+8%", icon: Calendar, accent: "from-violet-500 to-fuchsia-500" },
+  { label: "Security Score", value: "A+", delta: "+10%", icon: ShieldCheck, accent: "from-emerald-500 to-lime-500" }
+];
+
+const quickActions = [
+  { label: "Run AI scan", description: "Scan latest branch for vulnerabilities", icon: ShieldAlert, accent: "from-cyan-500 to-sky-500" },
+  { label: "Review backlog", description: "Triaged issues waiting for approval", icon: Ticket, accent: "from-violet-500 to-fuchsia-500" },
+  { label: "Sync GitHub", description: "Import PR data and release notes", icon: GitBranch, accent: "from-emerald-500 to-lime-500" }
+];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<
@@ -33,9 +70,7 @@ export default function App() {
     try {
       const res = await fetch("/api/auth/me", { method: "POST" });
       const data = await res.json();
-      if (res.ok) {
-        setCurrentUser(data.user);
-      }
+      if (res.ok) setCurrentUser(data.user);
     } catch {
       setCurrentUser(null);
     } finally {
@@ -44,174 +79,154 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    // Simulate clear session
-    try {
-      setCurrentUser(null);
-      setActiveTab("auth");
-    } catch {}
+    setCurrentUser(null);
+    setActiveTab("auth");
   };
 
-  // Nav categories for sidebar
-  const navigationItems = [
-    { id: "tracker" as const, label: "Issue Board", desc: "SRE ticket Kanban & tables", icon: Ticket },
-    { id: "sprints" as const, label: "Sprint Planner", desc: "Milestones & burndown charts", icon: Calendar },
-    { id: "scanner" as const, label: "AI Code Scanner", desc: "Continuous security audit", icon: ShieldAlert },
-    { id: "labs" as const, label: "Sandbox Labs", desc: "Vulnerability simulation lab", icon: Terminal },
-    { id: "ai-productivity" as const, label: "Productivity AI", desc: "PRs, Commits & Jest tests", icon: Sparkles },
-    { id: "analytics" as const, label: "Analytics Reports", desc: "Charts & real CSV exporters", icon: BarChart3 },
-    { id: "tenants" as const, label: "Workspace Tenants", desc: "Organizations & team logs", icon: Building2 },
-    { id: "auth" as const, label: "Credentials Gateway", desc: "Profile security & 2FA setups", icon: UserCheck },
-    { id: "integrations" as const, label: "Integrations Hub", desc: "CI/CD GitHub & webhook sockets", icon: GitBranch },
-    { id: "audits" as const, label: "Security Audits", desc: "Feature toggles & audit trails", icon: Fingerprint }
-  ];
-
   return (
-    <div className="min-h-screen bg-[#0A0C10] text-[#E2E8F0] font-sans flex flex-col selection:bg-cyan-950 selection:text-cyan-100">
-      
-      {/* Top Banner Bar */}
-      <header className="bg-[#0F172A] border-b border-[#1E293B] px-6 py-3.5 flex items-center justify-between z-40">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-cyan-500 rounded flex items-center justify-center font-bold text-[#0A0C10] tracking-tighter italic">
-            BF
-          </div>
-          <div>
-            <h1 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
-              BugFlow <span className="text-cyan-500">AI</span> 
-              <span className="text-[9px] bg-cyan-950 text-cyan-400 border border-cyan-800/40 px-1.5 py-0.5 rounded font-mono font-bold tracking-normal uppercase">
-                v2.1-Enterprise
-              </span>
-            </h1>
-            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-              Autonomous Triage & Site Reliability Intelligence Suite
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#070b16] text-slate-100 selection:bg-cyan-500/20 selection:text-slate-100">
+      <div className="mx-auto flex min-h-screen max-w-[1600px] flex-col px-4 py-5 sm:px-6 lg:px-8">
+        <header className="mb-6 grid gap-4 lg:grid-cols-[1.45fr_1fr]">
+          <div className="glass-card panel-shell p-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-cyan-500 to-sky-500 text-black shadow-lg shadow-cyan-500/20">
+                  <span className="text-lg font-black uppercase tracking-widest">BF</span>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-300/90">BugFlow AI</p>
+                  <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                    Modern SRE intelligence for teams that ship fast.
+                  </h1>
+                  <p className="mt-3 max-w-2xl text-sm text-slate-400 sm:text-base">
+                    A polished operational control plane for issue triage, sprint planning, security scanning and analytics — all in one modern workspace.
+                  </p>
+                </div>
+              </div>
 
-        {/* Current Active User Status Indicator */}
-        <div className="flex items-center gap-3 bg-[#0A0C10] border border-[#1E293B] px-3 py-1.5 rounded">
-          {loadingUser ? (
-            <div className="w-4 h-4 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
-          ) : currentUser ? (
-            <div className="flex items-center gap-2.5">
-              <div className="w-5 h-5 rounded-full bg-cyan-500 text-black font-bold flex items-center justify-center text-[9px]">
-                {currentUser.avatarUrl}
+              <div className="grid gap-3 sm:grid-cols-2 lg:w-[350px]">
+                <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-4">
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Workspace</p>
+                  <p className="mt-3 text-2xl font-semibold text-white">Aether Ops</p>
+                  <p className="mt-2 text-sm text-slate-400">Cloud reliability environment with continuous deployment visibility.</p>
+                </div>
+                <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-4">
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Live status</p>
+                  <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-emerald-400">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                    <span>All systems nominal</span>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-400">No critical incidents detected in the past 24 hours.</p>
+                </div>
               </div>
-              <div className="text-left">
-                <span className="text-[10px] font-bold text-white block leading-tight">{currentUser.name}</span>
-                <span className="text-[8px] text-cyan-400 font-mono uppercase font-bold tracking-wider block">
-                  {currentUser.role}
-                </span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="text-slate-500 hover:text-red-400 transition ml-1"
-                title="Disconnect Gateway Session"
-              >
-                <Power className="w-3.5 h-3.5" />
-              </button>
             </div>
-          ) : (
-            <button
-              onClick={() => setActiveTab("auth")}
-              className="text-[9px] font-bold text-cyan-400 hover:text-white uppercase tracking-wider cursor-pointer"
-            >
-              Sign In
-            </button>
-          )}
-        </div>
-      </header>
+          </div>
 
-      {/* Main split dashboard layout */}
-      <div className="flex-1 flex flex-col md:flex-row max-w-8xl w-full mx-auto">
-        
-        {/* Navigation Sidebar */}
-        <aside className="w-full md:w-64 bg-[#0A0C10] border-r border-[#1E293B]/70 p-4 flex flex-col justify-between">
-          <div className="flex flex-col gap-5">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] block pl-2">
-              Workspace Scope
-            </span>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {dashboardStats.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div key={stat.label} className="glass-card panel-shell p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.45em] text-slate-500">{stat.label}</p>
+                      <p className="mt-3 text-3xl font-semibold text-white">{stat.value}</p>
+                    </div>
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-3xl bg-gradient-to-br ${stat.accent} text-black shadow-lg shadow-cyan-500/20`}>
+                      <Icon className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm text-emerald-300">{stat.delta} vs last cycle</p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <div key={action.label} className="group glass-card panel-shell p-5 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:bg-slate-950/95">
+                  <div className={`inline-flex h-11 w-11 items-center justify-center rounded-3xl bg-gradient-to-br ${action.accent} text-black shadow-lg shadow-cyan-500/20`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <p className="mt-4 text-base font-semibold text-white">{action.label}</p>
+                  <p className="mt-2 text-sm text-slate-400">{action.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </header>
 
-            <nav className="flex flex-col gap-1">
-              {navigationItems.map(item => {
+        <div className="grid flex-1 gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+          <aside className="glass-card panel-shell p-5">
+            <div className="panel-header">
+              <div>
+                <p className="text-[9px] uppercase tracking-[0.45em] text-slate-500">Navigation</p>
+                <h2 className="mt-2 text-lg font-bold text-white">Workspace tools</h2>
+              </div>
+              <Settings className="h-5 w-5 text-slate-400" />
+            </div>
+
+            <nav className="space-y-2">
+              {navigationItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = activeTab === item.id;
+                const active = activeTab === item.id;
                 return (
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`text-left px-3 py-2 rounded-md flex items-start gap-3 transition cursor-pointer group ${
-                      isActive
-                        ? "bg-[#1E293B] text-cyan-400 border border-cyan-900/30"
-                        : "text-slate-400 hover:text-white hover:bg-[#0F172A]"
+                    className={`group flex w-full items-start gap-3 rounded-3xl border px-4 py-3 text-left transition duration-200 ${
+                      active
+                        ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-200 shadow-[inset_0_0_0_1px_rgba(56,189,248,0.18)]"
+                        : "border-white/5 bg-white/5 text-slate-300 hover:border-white/10 hover:bg-white/10"
                     }`}
                   >
-                    <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isActive ? "text-cyan-400" : "text-slate-500 group-hover:text-slate-300"}`} />
+                    <Icon className={`mt-1 h-5 w-5 flex-shrink-0 ${active ? "text-cyan-400" : "text-slate-400 group-hover:text-slate-200"}`} />
                     <div>
-                      <span className="text-xs font-bold block">{item.label}</span>
-                      <span className="text-[9px] text-slate-500 block leading-normal mt-0.5 group-hover:text-slate-400 font-sans">
-                        {item.desc}
-                      </span>
+                      <p className="text-sm font-semibold">{item.label}</p>
+                      <p className="mt-1 text-[11px] text-slate-500">{item.desc}</p>
                     </div>
                   </button>
                 );
               })}
             </nav>
-          </div>
 
-          {/* SRE Nodes Status */}
-          <div className="mt-8 border-t border-[#1E293B]/60 pt-4 flex flex-col gap-2">
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 uppercase">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
-              <span>Diagnostic Cluster Live</span>
+              <div className="mt-8 rounded-[28px] border border-cyan-500/10 bg-gradient-to-br from-cyan-500/10 to-slate-950/50 p-4 text-sm text-slate-300 shadow-[0_20px_50px_rgba(56,189,248,0.05)]">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500 text-black">
+                  <Flame className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="font-semibold text-white">Pro mode enabled</p>
+                  <p className="text-slate-400">Unlimited AI scans, premium templates, and instant deploy suggestions.</p>
+                </div>
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2 text-[11px] text-slate-400">
+                <div className="rounded-2xl bg-white/5 px-3 py-2">Next release: Q4 Ops Rollout</div>
+                <div className="rounded-2xl bg-white/5 px-3 py-2">Data refreshed 2 min ago</div>
+              </div>
             </div>
-            <p className="text-[9px] text-slate-600 font-mono leading-normal uppercase">
-              Node: cloudrun-aether-us-east<br />
-              Ingress IP: routing.prod
-            </p>
-          </div>
-        </aside>
+          </aside>
 
-        {/* Content canvas container */}
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
-          <div className="bg-[#0A0C10] border border-[#1E293B] rounded-lg overflow-hidden min-h-[680px]">
-            
-            {/* Header description dynamic panel */}
-            <div className="px-5 py-4 border-b border-[#1E293B] bg-[#0F172A] flex items-center justify-between">
-              <div>
-                <h2 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                  {activeTab === "tracker" && <>Operational Kanban & Board</>}
-                  {activeTab === "sprints" && <>Sprint Cycles & Burndown Progress</>}
-                  {activeTab === "scanner" && <>Automated Code Scanner Workbench</>}
-                  {activeTab === "labs" && <>Vulnerability Simulation Sandbox</>}
-                  {activeTab === "ai-productivity" && <>Developer Automation & Assets Builder</>}
-                  {activeTab === "analytics" && <>SaaS Performance & CSV Export Center</>}
-                  {activeTab === "tenants" && <>Workspace Tenants & Team Allocations</>}
-                  {activeTab === "auth" && <>Identity Security Profile Panel</>}
-                  {activeTab === "integrations" && <>CI/CD Pipelines & Slack Notifications</>}
-                  {activeTab === "audits" && <>Operational Audits & Flags</>}
-                </h2>
-                <p className="text-[10px] text-slate-400 font-semibold mt-0.5 uppercase tracking-wide">
-                  {activeTab === "tracker" && "Filter, file, and transition operational issue tickets"}
-                  {activeTab === "sprints" && "Track sprint backlogs and burndowns using dynamic charts"}
-                  {activeTab === "scanner" && "Input source files for instant AI-powered OWASP auditing"}
-                  {activeTab === "labs" && "Test vulnerable versus secure implementations with simulate exploits"}
-                  {activeTab === "ai-productivity" && "Assemble Pull Request templates, test files, andConventional commit messages"}
-                  {activeTab === "analytics" && "Monitor team velocity and download operational log spreadsheets"}
-                  {activeTab === "tenants" && "Manage multi-tenant organizations and engineering groups"}
-                  {activeTab === "auth" && "Toggle Two-Factor authentication security, verify tokens, and swap session profiles"}
-                  {activeTab === "integrations" && "Connect GitHub and configure Discord outbound webhooks"}
-                  {activeTab === "audits" && "Review actor audit logs and toggle system feature flags"}
-                </p>
+          <main className="space-y-6">
+            <div className="glass-card panel-shell p-5">
+              <div className="panel-header flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-300">Active module</p>
+                  <h2 className="mt-3 text-2xl font-bold text-white">{navigationItems.find((item) => item.id === activeTab)?.label}</h2>
+                </div>
+                <div className="flex flex-wrap gap-3 text-sm text-slate-400">
+                  <div className="rounded-3xl bg-white/5 px-4 py-2">Updated 5 min ago</div>
+                  <div className="rounded-3xl bg-white/5 px-4 py-2">80% uptime</div>
+                  <div className="rounded-3xl bg-white/5 px-4 py-2">Integrated with GitHub</div>
+                </div>
               </div>
             </div>
 
-            {/* Content modules router */}
-            <div className="p-1">
+            <div className="glass-card panel-shell p-5">
               {activeTab === "tracker" && <BugFlowTracker />}
               {activeTab === "sprints" && <SprintBoard />}
-              {activeTab === "scanner" && (
-                <AIBugDetector onAddTicket={() => setActiveTab("tracker")} />
-              )}
+              {activeTab === "scanner" && <AIBugDetector onAddTicket={() => setActiveTab("tracker")} />}
               {activeTab === "labs" && <DebuggingLab />}
               {activeTab === "ai-productivity" && <AIPanel />}
               {activeTab === "analytics" && <AnalyticsDashboard />}
@@ -222,22 +237,26 @@ export default function App() {
               {activeTab === "integrations" && <IntegrationsHub />}
               {activeTab === "audits" && <AdminPanel />}
             </div>
-
-          </div>
-        </main>
-
-      </div>
-
-      {/* Swiss-minimalist humble footer */}
-      <footer className="bg-[#0A0C10] border-t border-[#1E293B] py-5 px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] font-mono text-slate-500">
-        <span>BugFlow AI • Enterprise Diagnostic Operations Hub</span>
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> SSL SECURED</span>
-          <span className="text-slate-600">•</span>
-          <span>SAML_SSO: ENABLED</span>
+          </main>
         </div>
-      </footer>
 
+        <footer className="mt-6 rounded-[32px] border border-white/10 bg-slate-950/80 px-5 py-4 text-xs text-slate-500 shadow-[0_20px_60px_rgba(0,0,0,0.12)] sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p className="font-semibold text-slate-100">BugFlow AI</p>
+            <p className="mt-1 text-slate-500">Operational reliability dashboard with AI-powered insights.</p>
+          </div>
+          <div className="mt-3 flex items-center gap-4 sm:mt-0">
+            <div className="inline-flex items-center gap-2 text-slate-400">
+              <ShieldCheck className="h-4 w-4 text-cyan-400" />
+              <span>Secure by design</span>
+            </div>
+            <div className="inline-flex items-center gap-2 text-slate-400">
+              <BellRing className="h-4 w-4 text-slate-400" />
+              <span>Alerts configured</span>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }

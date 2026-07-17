@@ -70,8 +70,8 @@ export default function AIPanel() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#0A0C10]">
       {/* Diagnostics center */}
-      <div className="lg:col-span-6 flex flex-col h-[650px] bg-[#0F172A] border border-[#1E293B] rounded overflow-hidden">
-        <div className="bg-[#0F172A] px-4 py-3 border-b border-[#1E293B] flex items-center gap-2">
+      <div className="lg:col-span-6 panel-shell overflow-hidden flex flex-col h-[650px]">
+        <div className="panel-header">
           <Terminal className="w-4 h-4 text-cyan-400" />
           <h3 className="font-bold text-white text-xs uppercase tracking-wider">AI Stack Trace & Log Diagnostician</h3>
         </div>
@@ -127,7 +127,7 @@ export default function AIPanel() {
           )}
         </div>
 
-        <div className="p-3 bg-[#0F172A] border-t border-[#1E293B] flex justify-end">
+        <div className="panel-footer flex justify-end">
           <button
             onClick={handleDiagnose}
             disabled={isDiagnosing || (!logsInput.trim() && !traceInput.trim())}
@@ -149,8 +149,8 @@ export default function AIPanel() {
       </div>
 
       {/* Developer Productivity templates generator */}
-      <div className="lg:col-span-6 flex flex-col h-[650px] bg-[#0F172A] border border-[#1E293B] rounded overflow-hidden">
-        <div className="bg-[#0F172A] px-4 py-3 border-b border-[#1E293B] flex items-center gap-2">
+      <div className="lg:col-span-6 panel-shell overflow-hidden flex flex-col h-[650px]">
+        <div className="panel-header">
           <GitBranch className="w-4 h-4 text-cyan-400" />
           <h3 className="font-bold text-white text-xs uppercase tracking-wider">AI Developer Productivity Hub</h3>
         </div>
@@ -228,7 +228,7 @@ export default function AIPanel() {
           )}
         </div>
 
-        <div className="p-3 bg-[#0F172A] border-t border-[#1E293B] flex justify-end">
+        <div className="panel-footer flex justify-end">
           <button
             onClick={handleGenerate}
             disabled={isGenerating || !prodTitle.trim()}

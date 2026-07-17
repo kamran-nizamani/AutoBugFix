@@ -139,8 +139,8 @@ export default function AIBugDetector({ onAddTicket }: AIBugDetectorProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#0A0C10]">
       {/* Code Input Panel */}
-      <div id="ai-input-panel" className="lg:col-span-5 bg-[#0F172A] border border-[#1E293B] rounded overflow-hidden flex flex-col h-[650px]">
-        <div className="bg-[#0F172A] px-4 py-3 border-b border-[#1E293B] flex items-center justify-between">
+      <div id="ai-input-panel" className="lg:col-span-5 panel-shell overflow-hidden flex flex-col h-[650px]">
+        <div className="panel-header px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-cyan-400" />
             <h2 className="font-bold text-white text-xs uppercase tracking-wider">AI Analyzer Workbench</h2>
@@ -256,7 +256,7 @@ export default function AIBugDetector({ onAddTicket }: AIBugDetectorProps) {
       </div>
 
       {/* Analysis Output Panel */}
-      <div id="ai-results-panel" className="lg:col-span-7 flex flex-col h-[650px] overflow-y-auto bg-[#0F172A] border border-[#1E293B] rounded">
+      <div id="ai-results-panel" className="lg:col-span-7 panel-shell flex flex-col h-[650px] overflow-y-auto">
         {isAnalyzing ? (
           <div className="flex flex-col items-center justify-center flex-grow p-12 text-center h-full">
             <div className="relative mb-6">

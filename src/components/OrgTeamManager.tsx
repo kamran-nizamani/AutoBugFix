@@ -117,9 +117,9 @@ export default function OrgTeamManager() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#0A0C10]">
       
       {/* Organizations List / Creator */}
-      <div className="lg:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[650px] justify-between">
+      <div className="lg:col-span-4 panel-shell p-5 flex flex-col h-[650px] justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-4 border-b border-[#1E293B] pb-3">
+          <div className="panel-header gap-2 mb-4">
             <Building2 className="w-5 h-5 text-cyan-400" />
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">Enterprise Workspace Tenants</h3>
           </div>
@@ -177,9 +177,9 @@ export default function OrgTeamManager() {
       </div>
 
       {/* Organization Members list / Invitor */}
-      <div className="lg:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[650px] justify-between">
+      <div className="lg:col-span-4 panel-shell p-5 flex flex-col h-[650px] justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-4 border-b border-[#1E293B] pb-3">
+          <div className="panel-header gap-2 mb-4">
             <Users className="w-5 h-5 text-cyan-400" />
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">Member Roles & Authorizations</h3>
           </div>
@@ -269,9 +269,9 @@ export default function OrgTeamManager() {
       </div>
 
       {/* Teams list & Creator */}
-      <div className="lg:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[650px] justify-between">
+      <div className="lg:col-span-4 panel-shell p-5 flex flex-col h-[650px] justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-4 border-b border-[#1E293B] pb-3">
+          <div className="panel-header gap-2 mb-4">
             <Users className="w-5 h-5 text-cyan-400" />
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">Functional Development Teams</h3>
           </div>

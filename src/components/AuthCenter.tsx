@@ -146,7 +146,7 @@ export default function AuthCenter({ currentUser, onUserChanged }: AuthCenterPro
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#0A0C10]">
       
       {/* active user profile section */}
-      <div className="lg:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col justify-between h-[650px]">
+      <div className="lg:col-span-4 panel-shell p-5 flex flex-col justify-between h-[650px]">
         <div>
           <div className="flex items-center gap-2 mb-4 border-b border-[#1E293B] pb-3">
             <ShieldCheck className="w-5 h-5 text-cyan-400" />
@@ -226,8 +226,8 @@ export default function AuthCenter({ currentUser, onUserChanged }: AuthCenterPro
       </div>
 
       {/* Auth Register & Login control */}
-      <div className="lg:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[650px] overflow-y-auto">
-        <div className="flex items-center gap-2 mb-4 border-b border-[#1E293B] pb-3">
+      <div className="lg:col-span-4 panel-shell p-5 flex flex-col h-[650px] overflow-y-auto">
+        <div className="panel-header flex items-center gap-2 mb-4 border-b border-[#1E293B] pb-3">
           <LogIn className="w-5 h-5 text-cyan-400" />
           <h3 className="text-xs font-bold text-white uppercase tracking-wider">Enterprise Credentials Gateway</h3>
         </div>
@@ -365,8 +365,8 @@ export default function AuthCenter({ currentUser, onUserChanged }: AuthCenterPro
       </div>
 
       {/* Sessions and Active device list */}
-      <div className="lg:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[650px]">
-        <div className="flex items-center gap-2 mb-4 border-b border-[#1E293B] pb-3">
+      <div className="lg:col-span-4 panel-shell p-5 flex flex-col h-[650px]">
+        <div className="panel-header gap-2 mb-4">
           <Smartphone className="w-5 h-5 text-cyan-400" />
           <h3 className="text-xs font-bold text-white uppercase tracking-wider">Device & Session Management</h3>
         </div>

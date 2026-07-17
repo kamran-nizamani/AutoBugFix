@@ -92,7 +92,7 @@ export default function SprintBoard() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#0A0C10]">
       
       {/* Project selector + Sprint creation */}
-      <div className="lg:col-span-4 bg-[#0F172A] border border-[#1E293B] rounded p-5 flex flex-col h-[650px] justify-between">
+      <div className="lg:col-span-4 panel-shell p-5 flex flex-col h-[650px] justify-between">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2 border-b border-[#1E293B] pb-3">
             <Target className="w-5 h-5 text-cyan-400" />
@@ -180,8 +180,8 @@ export default function SprintBoard() {
       </div>
 
       {/* Sprints logs/planner timeline */}
-      <div className="lg:col-span-8 flex flex-col h-[650px] bg-[#0F172A] border border-[#1E293B] rounded overflow-hidden">
-        <div className="bg-[#0F172A] px-4 py-3 border-b border-[#1E293B] flex items-center justify-between">
+      <div className="lg:col-span-8 panel-shell overflow-hidden flex flex-col h-[650px]">
+        <div className="panel-header justify-between">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-cyan-400" />
             <h3 className="font-bold text-white text-xs uppercase tracking-wider">Active Cycle Burndown & Backlog</h3>

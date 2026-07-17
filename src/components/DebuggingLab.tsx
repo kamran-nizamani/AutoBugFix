@@ -354,9 +354,9 @@ export default function DebuggingLab() {
       </div>
 
       {/* Code Display Sandbox Workspace */}
-      <div id="labs-code-panel" className="lg:col-span-5 flex flex-col h-[700px] bg-[#0F172A] border border-[#1E293B] rounded overflow-hidden">
+      <div id="labs-code-panel" className="lg:col-span-5 panel-shell overflow-hidden flex flex-col h-[700px]">
         {/* Toggle between Vuln and Secure tab */}
-        <div className="bg-[#0F172A] px-4 py-3 border-b border-[#1E293B] flex items-center justify-between">
+        <div className="panel-header justify-between">
           <div className="flex items-center gap-2">
             <Code className="w-4 h-4 text-slate-400" />
             <h3 className="font-semibold text-slate-200 text-xs">Source Code Explorer</h3>
@@ -448,8 +448,8 @@ export default function DebuggingLab() {
       </div>
 
       {/* Exploit Simulator terminal */}
-      <div id="labs-sandbox-panel" className="lg:col-span-4 flex flex-col h-[700px] bg-[#0A0C10] border border-[#1E293B] rounded overflow-hidden">
-        <div className="bg-[#0F172A] px-4 py-3 border-b border-[#1E293B] flex items-center justify-between">
+      <div id="labs-sandbox-panel" className="lg:col-span-4 panel-shell overflow-hidden flex flex-col h-[700px]">
+        <div className="panel-header px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2 text-slate-300">
             <Terminal className="w-4 h-4 text-cyan-400" />
             <h3 className="font-semibold text-xs font-mono">exploit_console.sh</h3>
