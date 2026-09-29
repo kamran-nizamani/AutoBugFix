@@ -384,7 +384,8 @@ app.post("/api/auth/switch-user", (req, res) => {
 });
 
 app.get("/api/auth/users", (req, res) => {
-  res.json({ users });
+  const safeUsers = users.map(({ password, twoFactorSecret, ...user }) => user);
+  res.json({ users: safeUsers });
 });
 
 app.get("/api/auth/sessions", (req, res) => {
