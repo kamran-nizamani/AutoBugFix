@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Activity, AlertTriangle, BarChart3, Bell, Bot, CalendarDays, CheckCircle2,
-  ChevronRight, CircleDot, Command, GitBranch, LayoutDashboard, LifeBuoy,
+  Activity, BarChart3, Bell, Bot, CalendarDays, CheckCircle2,
+  ChevronRight, CircleDot, Command, GitBranch, LayoutDashboard,
   Menu, Plus, Search, Settings, ShieldCheck, Sparkles, Terminal, Ticket,
   Users, X
 } from "lucide-react";
@@ -208,7 +208,7 @@ export default function App() {
           <button className="icon-button lg:hidden" onClick={() => setMobileOpen(false)}><X className="h-4 w-4" /></button>
         </div>
         <div className="px-3 pb-4">
-          <button className="search-button" onClick={() => setCommandOpen(true)}><Search className="h-4 w-4" /><span>Search anything</span><kbd>⌘K</kbd></button>
+          <button className="search-button" onClick={() => setCommandOpen(true)} aria-label="Open command palette"><Search className="h-4 w-4" /><span>Search anything</span><kbd>Ctrl K</kbd></button>
         </div>
         <nav className="flex-1 overflow-y-auto px-3 pb-5">
           {groups.map((group) => (
@@ -239,17 +239,14 @@ export default function App() {
             <div><p className="text-[11px] font-medium text-slate-500">Workspace / {activeLabel}</p><h2 className="mt-1 text-lg font-semibold text-white">{activeLabel}</h2></div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="icon-button" title="Notifications"><Bell className="h-4 w-4" /><span className="notification-dot" /></button>
-            <button className="icon-button hidden sm:flex" title="Settings"><Settings className="h-4 w-4" /></button>
+            <button className="icon-button" title="Notifications" aria-label="Notifications"><Bell className="h-4 w-4" /><span className="notification-dot" /></button>
+            <button className="icon-button hidden sm:flex" title="Settings" aria-label="Settings"><Settings className="h-4 w-4" /></button>
             <div className="user-chip"><span className="avatar">{currentUser?.name?.slice(0, 1)?.toUpperCase() ?? "K"}</span><span className="hidden text-xs font-medium text-slate-300 md:block">{loadingUser ? "Loading..." : currentUser?.name ?? "Developer"}</span></div>
           </div>
         </header>
 
         <div className="content-wrap">
-          <div className="mb-5 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-xs text-slate-500"><CircleDot className="h-3.5 w-3.5 text-emerald-400" /> Production connected <span className="text-slate-700">•</span> Last sync 2 min ago</div>
-            <div className="hidden items-center gap-2 text-xs text-slate-600 md:flex"><Command className="h-3.5 w-3.5" /> Quick actions with ⌘K</div>
-          </div>
+          <div className="workspace-strip mb-5"><div className="flex items-center gap-2 text-xs text-slate-500"><CircleDot className="h-3.5 w-3.5 text-emerald-400" /> Production connected <span className="text-slate-700">•</span> Last sync 2 min ago</div><button className="quick-command hidden items-center gap-2 md:flex" onClick={() => setCommandOpen(true)}><Command className="h-3.5 w-3.5" /> Quick actions <kbd>Ctrl K</kbd></button></div>
           {renderModule()}
         </div>
       </main>
@@ -260,7 +257,7 @@ export default function App() {
         <div className="command-overlay" onClick={() => setCommandOpen(false)}>
           <div className="command-dialog" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-3 border-b border-white/[0.06] px-4 py-3"><Search className="h-4 w-4 text-slate-500" /><input autoFocus className="!border-0 !bg-transparent !p-0 !outline-none" placeholder="Jump to a workspace tool..." /><kbd>ESC</kbd></div>
-            <div className="p-2">
+            <div className="command-list p-2">
               {nav.map((item) => { const Icon = item.icon; return <button key={item.id} onClick={() => { setActiveTab(item.id); setCommandOpen(false); }} className="command-item"><Icon className="h-4 w-4 text-slate-500" /><span>{item.label}</span><span className="ml-auto text-[10px] text-slate-600">{item.group}</span></button>; })}
             </div>
           </div>
