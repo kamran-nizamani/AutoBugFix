@@ -75,3 +75,21 @@
   .topbar { height:64px; padding:0 16px; }
   .content-wrap { padding:18px 14px; }
 }
+
+.workspace-strip { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.quick-command { border:1px solid transparent; border-radius:8px; padding:6px 8px; color:#475569; font-size:11px; transition:.18s ease; }
+.quick-command:hover { border-color:rgba(255,255,255,.07); background:rgba(255,255,255,.025); color:#94a3b8; }
+.quick-command kbd { border:1px solid rgba(255,255,255,.07); border-radius:5px; padding:2px 5px; color:#64748b; font:9px var(--font-mono); }
+.command-list { max-height:55vh; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(148,163,184,.15) transparent; }
+@media (max-width: 640px) {
+  .workspace-strip { align-items:flex-start; }
+  .hero-card { border-radius:14px; }
+  .hero-card h1 { font-size:1.65rem; line-height:1.15; }
+  .surface-card { border-radius:14px; }
+  .metric-card { padding:14px; }
+  .metric-card:hover { transform:none; }
+  .btn-primary, .btn-secondary { min-height:38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
